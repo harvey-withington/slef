@@ -60,7 +60,7 @@
 
     <!-- Footer -->
     <footer class="mt-16 text-center text-slate-400 dark:text-slate-500 text-sm pb-8">
-      <p>SLEF v1.0.0 &bull; <a href="https://github.com/harvey-withington/slef" class="hover:text-slate-600 dark:hover:text-slate-300 underline transition-colors">View Source</a></p>
+      <p>SLEF v1.0.0 &bull; <a href="https://github.com/harvey-withington/slef" target="_blank" class="hover:text-slate-600 dark:hover:text-slate-300 underline transition-colors">View Source</a></p>
     </footer>
   </div>
 </main>
