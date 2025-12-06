@@ -112,7 +112,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-8">
         <!-- Generate New Option -->
         <button 
-            class="relative p-4 rounded-2xl border-2 text-left transition-all duration-200 flex items-center gap-4 group {activeTab === 'new' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-800'}"
+            class="relative p-4 rounded-2xl border-2 text-left transition-all duration-200 flex items-center gap-4 group disabled:opacity-40 disabled:grayscale disabled:cursor-not-allowed {activeTab === 'new' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-800'}"
             on:click={() => { activeTab = 'new'; status = 'ready'; }}
             disabled={generating || status === 'done'}
         >
@@ -132,7 +132,7 @@
 
         <!-- Regenerate Option -->
         <button 
-            class="relative p-4 rounded-2xl border-2 text-left transition-all duration-200 flex items-center gap-4 group {activeTab === 'regenerate' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-800'}"
+            class="relative p-4 rounded-2xl border-2 text-left transition-all duration-200 flex items-center gap-4 group disabled:opacity-40 disabled:grayscale disabled:cursor-not-allowed {activeTab === 'regenerate' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-800'}"
             on:click={() => { activeTab = 'regenerate'; status = 'ready'; }}
             disabled={generating || status === 'done'}
         >
