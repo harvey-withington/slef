@@ -7,8 +7,40 @@
   let inputTemplateId = '';
   let status = 'ready'; // ready, generating, done
   let activeTab = 'new'; // 'new' or 'regenerate'
-  
+  let idError = '';
+
+  const VALID_CHARS = /^[A-HJ-NP-Z2-9]+$/;
+
+  function validateId(id) {
+    if (!id) return 'Template ID is required';
+    if (id.length < 8) return 'Template ID must be at least 8 characters';
+    if (!VALID_CHARS.test(id)) return 'Template ID contains invalid characters';
+    return '';
+  }
+
+  function handleIdInput(e) {
+    // Auto-uppercase and remove spaces
+    let val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    // Remove ambiguous chars if user tries to type them (optional, or just let validation catch it)
+    // Let's just clean it for display
+    inputTemplateId = val;
+    
+    if (inputTemplateId.length > 0) {
+        idError = validateId(inputTemplateId);
+    } else {
+        idError = '';
+    }
+  }
+
   const generateTemplate = async () => {
+    if (activeTab === 'regenerate') {
+        const error = validateId(inputTemplateId);
+        if (error) {
+            idError = error;
+            return;
+        }
+    }
+
     generating = true;
     status = 'generating';
     
@@ -135,10 +167,14 @@
                  <input 
                    id="template-id"
                    type="text" 
-                   bind:value={inputTemplateId} 
+                   bind:value={inputTemplateId}
+                   on:input={handleIdInput}
                    placeholder="Enter Template ID (e.g. X7K9P2...)"
-                   class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center font-mono text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 bg-slate-50 dark:bg-slate-900 transition-colors duration-200"
+                   class="w-full px-4 py-3 rounded-xl border {idError ? 'border-red-500 focus:ring-red-500' : 'border-slate-300 dark:border-slate-600 focus:ring-blue-500'} focus:ring-2 focus:border-transparent text-center font-mono text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 bg-slate-50 dark:bg-slate-900 transition-colors duration-200 uppercase"
                  />
+                 {#if idError}
+                    <p class="text-red-500 text-sm mt-2 font-medium animate-in slide-in-from-top-1">{idError}</p>
+                 {/if}
               </div>
             {/if}
 
@@ -173,7 +209,7 @@
           <!-- Action Button -->
           <button
             on:click={generateTemplate}
-            disabled={generating || (activeTab === 'regenerate' && !inputTemplateId.trim())}
+            disabled={generating || (activeTab === 'regenerate' && (!!idError || !inputTemplateId.trim()))}
             class="relative group w-full sm:w-auto px-8 py-4 bg-slate-900 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-blue-200 dark:hover:shadow-blue-900/30 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden disabled:shadow-none"
           >
             <span class="relative z-10 flex items-center justify-center gap-2">
