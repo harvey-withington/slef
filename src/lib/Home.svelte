@@ -60,31 +60,52 @@
         SLEF
       </h1>
       <p class="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed font-light">
-        Self Custody. Secured.
+        Crypto Self Custody for Humans.
         <span class="font-medium text-blue-600 dark:text-blue-400 block mt-2 text-base">Generate your unique, offline-first encryption template.</span>
       </p>
     </header>
 
-    <!-- Tabs -->
-    <div class="flex justify-center mb-8">
-        <div class="bg-white dark:bg-slate-800 p-1 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 inline-flex">
-            <button 
-                class="px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 {activeTab === 'new' ? 'bg-slate-900 dark:bg-blue-600 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700'}"
-                on:click={() => { activeTab = 'new'; status = 'ready'; }}
-                disabled={generating || status === 'done'}
-            >
-                <Plus class="w-4 h-4" />
-                Generate New
-            </button>
-            <button 
-                class="px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 {activeTab === 'regenerate' ? 'bg-slate-900 dark:bg-blue-600 text-white shadow-md' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700'}"
-                on:click={() => { activeTab = 'regenerate'; status = 'ready'; }}
-                disabled={generating || status === 'done'}
-            >
-                <RefreshCw class="w-4 h-4" />
-                Regenerate Existing
-            </button>
-        </div>
+    <!-- Mode Selection (Radio Style) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-8">
+        <!-- Generate New Option -->
+        <button 
+            class="relative p-4 rounded-2xl border-2 text-left transition-all duration-200 flex items-center gap-4 group {activeTab === 'new' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-800'}"
+            on:click={() => { activeTab = 'new'; status = 'ready'; }}
+            disabled={generating || status === 'done'}
+        >
+            <div class="flex-shrink-0 w-5 h-5 rounded-full border-2 {activeTab === 'new' ? 'border-blue-500 bg-blue-500' : 'border-slate-300 dark:border-slate-500'} flex items-center justify-center transition-colors">
+                {#if activeTab === 'new'}
+                    <div class="w-2 h-2 bg-white rounded-full"></div>
+                {/if}
+            </div>
+            
+            <Plus class="w-10 h-10 flex-shrink-0 transition-colors {activeTab === 'new' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}" />
+            
+            <div>
+                <span class="block font-semibold text-slate-900 dark:text-white {activeTab === 'new' ? 'text-blue-700 dark:text-blue-300' : ''}">Generate New</span>
+                <span class="text-xs text-slate-500 dark:text-slate-400">Create a fresh, random template</span>
+            </div>
+        </button>
+
+        <!-- Regenerate Option -->
+        <button 
+            class="relative p-4 rounded-2xl border-2 text-left transition-all duration-200 flex items-center gap-4 group {activeTab === 'regenerate' ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-800'}"
+            on:click={() => { activeTab = 'regenerate'; status = 'ready'; }}
+            disabled={generating || status === 'done'}
+        >
+             <div class="flex-shrink-0 w-5 h-5 rounded-full border-2 {activeTab === 'regenerate' ? 'border-blue-500 bg-blue-500' : 'border-slate-300 dark:border-slate-500'} flex items-center justify-center transition-colors">
+                {#if activeTab === 'regenerate'}
+                    <div class="w-2 h-2 bg-white rounded-full"></div>
+                {/if}
+            </div>
+            
+            <RefreshCw class="w-10 h-10 flex-shrink-0 transition-colors {activeTab === 'regenerate' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}" />
+            
+            <div>
+                <span class="block font-semibold text-slate-900 dark:text-white {activeTab === 'regenerate' ? 'text-blue-700 dark:text-blue-300' : ''}">Regenerate Existing</span>
+                <span class="text-xs text-slate-500 dark:text-slate-400">Restore from Template ID</span>
+            </div>
+        </button>
     </div>
 
     <!-- Main Card -->
