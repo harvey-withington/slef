@@ -33,7 +33,9 @@
   }
 
   const generateTemplate = async () => {
-    if (activeTab === 'regenerate') {
+    const isRedownload = status === 'done';
+
+    if (!isRedownload && activeTab === 'regenerate') {
         const error = validateId(inputTemplateId);
         if (error) {
             idError = error;
@@ -42,19 +44,28 @@
     }
 
     generating = true;
-    status = 'generating';
+    if (!isRedownload) {
+        status = 'generating';
+    }
     
     try {
-      // Add a small delay so user sees the loading state (UX)
-      await new Promise(r => setTimeout(r, 800));
+      if (!isRedownload) {
+          // Add a small delay so user sees the loading state (UX) only for new generation
+          await new Promise(r => setTimeout(r, 800));
+      }
       
       const generator = new TemplateGenerator();
-      // If regenerating, use the input ID. Otherwise null.
-      const idToUse = activeTab === 'regenerate' ? (inputTemplateId.trim() || null) : null;
+      // If redownloading, use existing templateId.
+      // If regenerating tab, use input.
+      // Else (new tab), null.
+      const idToUse = isRedownload ? templateId : (activeTab === 'regenerate' ? (inputTemplateId.trim() || null) : null);
       
-      templateId = await generator.generate(idToUse);
+      const generatedId = await generator.generate(idToUse);
       
-      status = 'done';
+      if (!isRedownload) {
+          templateId = generatedId;
+          status = 'done';
+      }
     } catch (error) {
       console.error(error);
       alert('Error generating template: ' + error.message);
