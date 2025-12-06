@@ -83,9 +83,9 @@
           </defs>
           
           <!-- Left Half -->
-          <path d="M12 2 L4 5 V12 C4 17.5 10 21.5 12 22 C13 18 10 16 12 12 C14 8 11 6 12 2 Z" fill="url(#gradientLeft)" stroke="none"/>
+          <path d="M12 2 L4 5 V12 C4 17.5 10 21.5 12 22 C11.5 18 10.5 16 11 12 C11.5 8 12.5 6 12 2 Z" fill="url(#gradientLeft)" stroke="none"/>
           <!-- Right Half -->
-          <path d="M12 2 C11 6 8 8 10 12 C12 16 9 18 10 22 C14 21.5 20 17.5 20 12 V5 L12 2 Z" fill="url(#gradientRight)" stroke="none"/>
+          <path d="M12 2 C12.5 6 11.5 8 11 12 C10.5 16 11.5 18 12 22 C14 21.5 20 17.5 20 12 V5 L12 2 Z" fill="url(#gradientRight)" stroke="none"/>
         </svg>
       </div>
       <h1 class="text-5xl font-black tracking-tighter text-slate-900 dark:text-white mb-4">
