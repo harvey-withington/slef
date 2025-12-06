@@ -81,23 +81,12 @@
     <header class="mb-12 text-center">
       <div class="inline-flex items-center justify-center p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-lg shadow-slate-200 dark:shadow-none border border-slate-100 dark:border-slate-700 mb-6 transform hover:scale-105 transition-transform duration-300">
         <!-- Custom SLEF Icon: Gapless Gradient Split Shield -->
-        <svg class="w-16 h-16" viewBox="0 0 24 24" fill="none" style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));">
-          <defs>
-            <linearGradient id="gradientLeft" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#60A5FA;stop-opacity:1" /> <!-- Blue-400 -->
-              <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" /> <!-- Violet-500 -->
-            </linearGradient>
-            <linearGradient id="gradientRight" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style="stop-color:#F472B6;stop-opacity:1" /> <!-- Pink-400 -->
-              <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" /> <!-- Violet-600 -->
-            </linearGradient>
-          </defs>
-          
-          <!-- Left Half -->
-          <path d="M12 2 L4 5 V12 C4 17.5 10 21.5 12 22 C11.5 18 10.5 16 11 12 C11.5 8 12.5 6 12 2 Z" fill="url(#gradientLeft)" stroke="none"/>
-          <!-- Right Half -->
-          <path d="M12 2 C12.5 6 11.5 8 11 12 C10.5 16 11.5 18 12 22 C14 21.5 20 17.5 20 12 V5 L12 2 Z" fill="url(#gradientRight)" stroke="none"/>
-        </svg>
+        <img 
+            src="/slef-logo.svg" 
+            alt="SLEF Logo" 
+            class="w-16 h-16" 
+            style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));"
+        />
       </div>
       <h1 class="text-5xl font-black tracking-tighter text-slate-900 dark:text-white mb-4">
         SLEF

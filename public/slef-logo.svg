@@ -1,0 +1,17 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradientLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60A5FA;stop-opacity:1" /> <!-- Blue-400 -->
+      <stop offset="100%" style="stop-color:#8B5CF6;stop-opacity:1" /> <!-- Violet-500 -->
+    </linearGradient>
+    <linearGradient id="gradientRight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F472B6;stop-opacity:1" /> <!-- Pink-400 -->
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" /> <!-- Violet-600 -->
+    </linearGradient>
+  </defs>
+  
+  <!-- Left Half -->
+  <path d="M12 2 L4 5 V12 C4 17.5 10 21.5 12 22 C11.5 18 10.5 16 11 12 C11.5 8 12.5 6 12 2 Z" fill="url(#gradientLeft)" stroke="none"/>
+  <!-- Right Half -->
+  <path d="M12 2 C12.5 6 11.5 8 11 12 C10.5 16 11.5 18 12 22 C14 21.5 20 17.5 20 12 V5 L12 2 Z" fill="url(#gradientRight)" stroke="none"/>
+</svg>
