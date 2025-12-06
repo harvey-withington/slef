@@ -244,15 +244,15 @@
       <!-- Footer Info -->
       <div class="bg-slate-50 dark:bg-slate-700/20 px-8 py-6 border-t border-slate-100 dark:border-slate-700">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-slate-500 dark:text-slate-400">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center justify-center gap-2">
             <div class="w-2 h-2 rounded-full bg-green-500"></div>
             Client-side only
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center justify-center gap-2">
             <div class="w-2 h-2 rounded-full bg-green-500"></div>
             Offline compatible
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center justify-center gap-2">
             <div class="w-2 h-2 rounded-full bg-green-500"></div>
             Open source
           </div>
