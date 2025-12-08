@@ -10,13 +10,13 @@ SLEF (Self Custody for Humans) is a secure, client-side tool designed to help us
 - **Offline Compatible**: Designed to work without an internet connection for maximum security.
 - **Deterministic**: Regenerate the exact same template using your unique 8-character Template ID.
 - **Modern UI**: Built with Svelte and Tailwind CSS for a clean, responsive user experience.
-- **Dark Mode**: Fully supported dark theme.
+- **Dark Mode**: Because dark mode is cool.
 
 ## How It Works
 
 1.  **Generate New**: Creates a completely unique encryption template with a random algorithm.
 2.  **Download**: Save your template as an Excel file (.xlsx) which you can print or store offline.
-3.  **Regenerate**: Enter your previous Template ID to restore the exact same grid layout if you lose your file.
+3.  **Regenerate**: Enter your previous Template ID to regenerate the exact same template if you lose your file.
 
 ## Tech Stack
 
@@ -63,4 +63,4 @@ This project is configured to deploy automatically to GitHub Pages via GitHub Ac
 
 ## License
 
-MIT
+[MIT](LICENSE)
