@@ -2,6 +2,8 @@
 
 SLEF (Self Custody for Humans) is a secure, client-side tool designed to help users generate unique, offline-first encryption templates for crypto self-custody. It provides a simple way to create and restore deterministic paper wallet layouts without exposing sensitive data to the internet.
 
+### [🚀 Try SLEF Now](https://harvey-withington.github.io/slef/)
+
 ## Features
 
 - **Client-Side Only**: All template generation happens locally in your browser. No data is ever sent to a server.
