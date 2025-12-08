@@ -32,6 +32,8 @@
     }
   }
 
+  const base = import.meta.env.BASE_URL;
+
   const generateTemplate = async () => {
     const isRedownload = status === 'done';
 
@@ -82,8 +84,8 @@
       <div class="inline-flex items-center justify-center p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-lg shadow-slate-200 dark:shadow-none border border-slate-100 dark:border-slate-700 mb-6 transform hover:scale-105 transition-transform duration-300">
         <!-- Custom SLEF Icon: Gapless Gradient Split Shield -->
         <img 
-            src="/slef-logo.svg" 
-            alt="SLEF Logo" 
+            src="{base}slef-logo.svg" 
+            alt="SLEF Logo"  
             class="w-16 h-16" 
             style="filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));"
         />

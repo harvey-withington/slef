@@ -4,6 +4,7 @@
   import { FileSpreadsheet, BookOpen, Shield, Sun, Moon } from 'lucide-svelte';
 
   let darkMode = false;
+  const base = import.meta.env.BASE_URL;
 
   onMount(() => {
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -35,7 +36,7 @@
   >
     <div class="bg-slate-900 dark:bg-blue-600 p-2 rounded-lg shadow-lg dark:shadow-blue-900/20 group-hover:scale-105 transition-transform duration-200">
       <img 
-        src="/slef-logo.svg" 
+        src="{base}slef-logo.svg" 
         alt="SLEF Logo" 
         class="w-6 h-6" 
         style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));"
