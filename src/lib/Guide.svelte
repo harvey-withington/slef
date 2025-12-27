@@ -44,10 +44,9 @@
         class="text-blue-600 dark:text-blue-400 font-medium"
       >
         a hard problem</span
-      >. Even security experts struggle to find a method that is
+      >. But it needs to be solved for wider crypto adoption. We humans need a simple method that is
       <span class="text-blue-600 dark:text-blue-400 font-medium">
-        secure, decentrallized, and trustless
-      </span>.
+        secure, user-friendly, and trustless</span>.
     </p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
       <div
@@ -231,7 +230,7 @@
         </div>
 
         <div
-          class="bg-slate-800/80 dark:bg-slate-900/80 backdrop-blur-md border border-red-500/30 p-8 rounded-2xl max-w-md w-full shadow-xl"
+          class="bg-slate-800/80 dark:bg-slate-900/80 backdrop-blur-md border border-red-500/30 p-8 rounded-2xl max-w-sm w-full shadow-xl"
         >
           <h4 class="text-white font-bold text-lg mb-6 flex items-center gap-3">
             <span class="relative flex h-3 w-3">
