@@ -5,17 +5,50 @@
     Download,
     RefreshCw,
     Plus,
+    Check,
+    AlertTriangle,
+    Copy,
   } from "lucide-svelte";
   import { TemplateGenerator } from "./generator";
+  import { saveAs } from "file-saver";
+  import { onMount } from "svelte";
 
   let generating = false;
   let templateId = "";
+  let generatedBlob = null;
   let inputTemplateId = "";
-  let status = "ready"; // ready, generating, done
+  let status = "ready"; // ready, generating, review, done
   let activeTab = "new"; // 'new' or 'regenerate'
   let idError = "";
+  let copied = false;
+  let filename = "Template";
+  let loaded = false;
+
+  onMount(() => {
+    if (typeof localStorage !== "undefined") {
+      const saved = localStorage.getItem("slef-filename");
+      if (saved) filename = saved;
+      loaded = true;
+    }
+  });
+
+  $: if (loaded && typeof localStorage !== "undefined") {
+    localStorage.setItem("slef-filename", filename);
+  }
 
   const VALID_CHARS = /^[A-HJ-NP-Z2-9]+$/;
+
+  async function copyToClipboard(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+      setTimeout(() => {
+        copied = false;
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  }
 
   function validateId(id) {
     if (!id) return "Template ID is required";
@@ -39,6 +72,10 @@
   }
 
   const base = import.meta.env.BASE_URL;
+
+  const getFilename = () => {
+    return (filename.trim() || "Template") + ".xlsx";
+  };
 
   const generateTemplate = async () => {
     const isRedownload = status === "done";
@@ -72,11 +109,22 @@
           ? inputTemplateId.trim() || null
           : null;
 
-      const generatedId = await generator.generate(idToUse);
+      const result = await generator.generate(idToUse);
 
       if (!isRedownload) {
-        templateId = generatedId;
-        status = "done";
+        templateId = result.templateId;
+        generatedBlob = result.blob;
+
+        if (activeTab === "regenerate") {
+          saveAs(result.blob, getFilename());
+          status = "done";
+        } else {
+          status = "review";
+        }
+      } else {
+        // Direct download for re-downloads if needed, but current flow resets to ready
+        // If we want to support re-downloading the same blob:
+        saveAs(result.blob, getFilename());
       }
     } catch (error) {
       console.error(error);
@@ -84,6 +132,13 @@
       status = "ready";
     } finally {
       generating = false;
+    }
+  };
+
+  const downloadTemplate = () => {
+    if (generatedBlob) {
+      saveAs(generatedBlob, getFilename());
+      status = "done";
     }
   };
 </script>
@@ -229,7 +284,7 @@
             </h3>
             <p class="text-slate-500 dark:text-slate-400 max-w-md mx-auto">
               {activeTab === "new"
-                ? "Click below to create a completely unique encryption template with a random algorithm."
+                ? "Click below to create a unique encryption template with a randomized sequence of ciphers."
                 : "Enter your previous Template ID to regenerate the exact same file."}
             </p>
           </div>
@@ -258,6 +313,26 @@
               {/if}
             </div>
           {/if}
+
+          <!-- Filename Input -->
+          <div
+            class="w-full max-w-sm mx-auto flex items-center gap-2 text-slate-600 dark:text-slate-400"
+          >
+            <span class="text-sm font-medium whitespace-nowrap">Save as:</span>
+            <div class="relative flex-grow">
+              <input
+                type="text"
+                bind:value={filename}
+                placeholder="Template"
+                class="w-full px-3 py-2 pr-12 rounded-lg border border-slate-300 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-900 text-slate-800 dark:text-white placeholder-slate-400 text-sm transition-all"
+              />
+              <span
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"
+              >
+                .xlsx
+              </span>
+            </div>
+          </div>
         {:else if status === "generating"}
           <!-- Generating State -->
           <div class="text-center space-y-4 animate-pulse">
@@ -270,18 +345,74 @@
             </div>
             <h3 class="text-xl font-semibold text-slate-900 dark:text-white">
               {activeTab === "new"
-                ? "Constructing Algorithm..."
+                ? "Constructing Cipher Chain..."
                 : "Restoring Template..."}
             </h3>
             <p class="text-slate-500 dark:text-slate-400">
               {activeTab === "new"
-                ? "Combining secure building blocks randomly"
+                ? "Configuring Vigenère, Bitwise & Transposition layers"
                 : "Rebuilding algorithm from seed"}
             </p>
           </div>
+        {:else if status === "review"}
+          <!-- Review ID State -->
+          <div class="text-center space-y-6 max-w-lg mx-auto animate-in fade-in zoom-in-95 duration-300">
+            <div
+              class="w-20 h-20 bg-amber-50 dark:bg-amber-900/20 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <AlertTriangle
+                class="w-10 h-10 text-amber-600 dark:text-amber-400"
+              />
+            </div>
+            
+            <div class="space-y-2">
+              <h3 class="text-2xl font-bold text-slate-900 dark:text-white">
+                Save Your Template ID
+              </h3>
+              <p class="text-slate-500 dark:text-slate-400">
+                For security, this ID is <span class="font-bold text-amber-600 dark:text-amber-400">NOT</span> saved in the file.
+                <br>You must save it now to recover your funds later.
+              </p>
+            </div>
+
+            <div
+              class="bg-slate-100 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl p-6 relative group flex items-center justify-between gap-4"
+            >
+              <span
+                class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 px-2 text-xs font-bold uppercase tracking-wider text-slate-500"
+              >
+                Template ID
+              </span>
+              <div
+                class="text-3xl sm:text-4xl font-mono font-bold text-slate-800 dark:text-slate-100 tracking-wider selectable break-all text-center flex-grow"
+              >
+                {templateId}
+              </div>
+              <button
+                class="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                on:click={() => copyToClipboard(templateId)}
+                title="Copy to clipboard"
+              >
+                {#if copied}
+                  <Check class="w-6 h-6 text-green-500" />
+                {:else}
+                  <Copy class="w-6 h-6" />
+                {/if}
+              </button>
+            </div>
+
+            <button
+              on:click={downloadTemplate}
+              class="w-full px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-lg transition-all duration-200 shadow-lg hover:shadow-amber-200 dark:hover:shadow-amber-900/30 flex items-center justify-center gap-2"
+            >
+              <Check class="w-6 h-6" />
+              I Have Saved This ID
+            </button>
+          </div>
+
         {:else if status === "done"}
           <!-- Done State -->
-          <div class="text-center space-y-4">
+          <div class="text-center space-y-6 max-w-lg mx-auto">
             <div
               class="w-20 h-20 bg-green-50 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4"
             >
@@ -293,54 +424,75 @@
               Template Generated!
             </h3>
             <div
-              class="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2 inline-block"
+              class="bg-slate-100 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 rounded-xl p-6 relative group flex items-center justify-between gap-4"
             >
               <span
-                class="text-slate-500 dark:text-slate-400 uppercase tracking-wider text-xs"
-                >Template ID</span
+                class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-slate-800 px-2 text-xs font-bold uppercase tracking-wider text-slate-500"
               >
+                Template ID
+              </span>
               <div
-                class="text-lg font-mono font-bold text-slate-700 dark:text-slate-200 selectable"
+                class="text-3xl sm:text-4xl font-mono font-bold text-slate-800 dark:text-slate-100 tracking-wider selectable break-all text-center flex-grow"
               >
                 {templateId}
               </div>
+              <button
+                class="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                on:click={() => copyToClipboard(templateId)}
+                title="Copy to clipboard"
+              >
+                {#if copied}
+                  <Check class="w-6 h-6 text-green-500" />
+                {:else}
+                  <Copy class="w-6 h-6" />
+                {/if}
+              </button>
             </div>
           </div>
         {/if}
 
-        <!-- Action Button -->
-        <button
-          on:click={generateTemplate}
-          disabled={generating ||
-            (activeTab === "regenerate" &&
-              (!!idError || !inputTemplateId.trim()))}
-          class="relative group w-full sm:w-auto px-8 py-4 bg-slate-900 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-blue-200 dark:hover:shadow-blue-900/30 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden disabled:shadow-none"
-        >
-          <span class="relative z-10 flex items-center justify-center gap-2">
-            {#if status === "done"}
-              <Download class="w-5 h-5" />
-              Download Template
-            {:else if activeTab === "regenerate"}
-              <RefreshCw class="w-5 h-5" />
-              Regenerate Template
-            {:else}
-              <Shield class="w-5 h-5" />
-              Generate New Template
-            {/if}
-          </span>
-        </button>
+        {#if status === "ready"}
+          <!-- Action Button -->
+          <button
+            on:click={generateTemplate}
+            disabled={generating ||
+              (activeTab === "regenerate" &&
+                (!!idError || !inputTemplateId.trim()))}
+            class="relative group w-full sm:w-auto px-8 py-4 bg-slate-900 dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-500 text-white rounded-xl font-semibold text-lg transition-all duration-200 shadow-lg hover:shadow-blue-200 dark:hover:shadow-blue-900/30 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden disabled:shadow-none"
+          >
+            <span class="relative z-10 flex items-center justify-center gap-2">
+              {#if activeTab === "regenerate"}
+                <RefreshCw class="w-5 h-5" />
+                Regenerate Template
+              {:else}
+                <Shield class="w-5 h-5" />
+                Generate New Template
+              {/if}
+            </span>
+          </button>
+        {/if}
 
         {#if status === "done"}
-          <button
-            class="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 underline mt-4"
-            on:click={() => {
-              status = "ready";
-              inputTemplateId = "";
-              templateId = "";
-            }}
-          >
-            Generate Another
-          </button>
+          <div class="flex flex-col gap-4">
+            <button
+              on:click={downloadTemplate}
+              class="px-8 py-3 bg-slate-900 dark:bg-slate-700 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors flex items-center gap-2 justify-center"
+            >
+              <Download class="w-5 h-5" />
+              Download Again
+            </button>
+            <button
+              class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-green-200 dark:hover:shadow-green-900/30"
+              on:click={() => {
+                status = "ready";
+                inputTemplateId = "";
+                templateId = "";
+                generatedBlob = null;
+              }}
+            >
+              Done
+            </button>
+          </div>
         {/if}
       </div>
     </div>

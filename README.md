@@ -61,6 +61,32 @@ This project is configured to deploy automatically to GitHub Pages via GitHub Ac
 2.  The workflow in `.github/workflows/deploy.yml` will build and deploy to the `gh-pages` branch.
 3.  Ensure GitHub Pages is enabled in repository settings and pointing to the `gh-pages` branch.
 
+## Cryptography & Security
+
+### 1. Excel-Side Encryption (Offline Formulas)
+These algorithms are embedded directly into the Excel cells to encrypt and decrypt the input without any external dependencies.
+
+- **Polyalphabetic Substitution (Vigenère Variants)**
+  - **Additive Mixing (Used in "substitute" step):** The character shift is calculated by **adding** the Password character code and the Salt (`Shift = PasswordChar + Salt`).
+  - **Bitwise Mixing (Used in "xor" step):** The character shift is derived by **XORing** the Password character code with the Salt (`Shift = BITXOR(PasswordChar, Salt)`).
+  - **Case Preservation:** For both variants, the final shift is applied modulo 26. This ensures that uppercase letters remain uppercase and lowercase letters remain lowercase, preserving the format of seed phrases.
+- **Transposition Cipher**
+  - **Usage:** Used in the **"reverse"** step.
+  - **Implementation:** Reverses the string order using standard Excel text functions (`MID`, `LEN`, `INDIRECT`) and calculated indices.
+- **Monoalphabetic Substitution**
+  - **Usage:** Used in the **"map"** step (always the final operation).
+  - **Implementation:** Maps every character (A-Z, a-z) to a randomized counterpart using `VLOOKUP` against a generated "KeyMap" sheet.
+
+### 2. Generator-Side Logic (Setup & Keys)
+These algorithms run in the browser to deterministically generate the unique structure and keys for each template.
+
+- **Mulberry32 (PRNG)**
+  - **Usage:** A seeded Pseudo-Random Number Generator used to shuffle the alphabet maps, determine the sequence of operations, and generate the fixed salts.
+- **cyrb128 (Hash Function)**
+  - **Usage:** Hashes the alphanumeric **Template ID** into a 128-bit integer seed for the Mulberry32 RNG. This ensures the same Template ID always produces the exact same Excel sheet structure.
+- **Web Crypto API (CSPRNG)**
+  - **Usage:** `window.crypto.getRandomValues` is used to generate the initial secure random Template ID.
+
 ## License
 
 [MIT](LICENSE)

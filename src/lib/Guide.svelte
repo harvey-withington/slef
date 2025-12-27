@@ -91,7 +91,7 @@
         1. Generate Template
       </h3>
       <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
-        We generate a unique Excel file with a randomized algorithm and a
+        We generate a unique Excel file with a randomized cipher sequence and a
         shuffled <span
           class="font-mono text-xs bg-slate-100 dark:bg-slate-700 px-1 py-0.5 rounded"
           >KeyMap</span
@@ -164,8 +164,9 @@
           </h3>
           <div class="space-y-4 text-slate-300 text-lg leading-relaxed">
             <p>
-              SLEF relies on <strong class="text-white">Shannon Entropy</strong
-              >. The Excel file acts as a physical key containing a unique
+              SLEF combines <strong class="text-white">Bitwise-Mixed Vigenère Ciphers</strong>,
+              <strong class="text-white">Transposition</strong>, and <strong class="text-white">Shannon Entropy</strong>.
+              The Excel file acts as a physical key containing a unique
               <span class="text-white font-mono bg-white/10 px-1 rounded"
                 >KeyMap</span
               >—a random permutation of 52 characters.
@@ -174,8 +175,8 @@
               Without the Excel file, an attacker faces <strong>52!</strong>
               (approx. 8 &times; 10<sup>67</sup>) possible combinations. This
               number is larger than the number of atoms in the galaxy. Even with
-              the file, they still need your strong password to solve the
-              Vigenère cipher layers.
+              the file, they still need your strong password to decrypt the
+              multi-layered bitwise encryption.
             </p>
           </div>
         </div>
@@ -214,6 +215,20 @@
               <span
                 ><strong>Action:</strong> Write down your Template ID in multiple
                 secure locations.</span
+              >
+            </li>
+            <li class="flex gap-4">
+              <span class="text-yellow-400 font-bold text-xl">•</span>
+              <span
+                ><strong>Privacy:</strong> Turn off "Auto-Save" in Excel to prevent
+                your password or seed from being saved to the file.</span
+              >
+            </li>
+            <li class="flex gap-4">
+              <span class="text-orange-400 font-bold text-xl">•</span>
+              <span
+                ><strong>Security:</strong> Disconnect from the internet before
+                opening the file to enter your sensitive data.</span
               >
             </li>
           </ul>

@@ -1,31 +1,8 @@
 import ExcelJS from "exceljs";
-import { saveAs } from "file-saver";
 import { randomInt, shuffleArray, generateId, createRNG } from "./crypto";
 
 // Define the building blocks for the encryption algorithm
-const BUILDING_BLOCKS = {
-  substitute: {
-    name: "substitute",
-    // Removed leading '=' to allow nesting
-    // Added MAX(..., 1) to prevent DIV/0 if password is empty
-    formula: (cell, param, passwordCell) =>
-      `CHAR(MOD(CODE(MID(${cell},ROW(INDIRECT("1:"&LEN(${cell}))),1)) + ${param} + CODE(MID(${passwordCell},MOD(ROW(INDIRECT("1:"&LEN(${cell})))-1,MAX(LEN(${passwordCell}),1))+1,1)), 94) + 33)`,
-  },
-
-  xor: {
-    name: "xor",
-    formula: (cell, param, passwordCell) =>
-      `BITXOR(CODE(MID(${cell},ROW(INDIRECT("1:"&LEN(${cell}))),1)), MOD(${param} + CODE(MID(${passwordCell},MOD(ROW(INDIRECT("1:"&LEN(${cell})))-1,MAX(LEN(${passwordCell}),1))+1,1)), 256))`,
-  },
-
-  reverse: {
-    name: "reverse",
-    // Replaced SEQUENCE (Excel 365) with ROW(INDIRECT) (Legacy compatible)
-    // Formula: LEN - ROW + 1 maps 1..N to N..1
-    formula: (cell) =>
-      `CONCAT(MID(${cell},LEN(${cell}) - ROW(INDIRECT("1:"&LEN(${cell}))) + 1,1))`,
-  },
-};
+// (Legacy code removed to prevent BITXOR compatibility issues)
 
 export class TemplateGenerator {
   constructor() {
@@ -107,9 +84,8 @@ export class TemplateGenerator {
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    saveAs(blob, `Cypher-Template-${params.templateId}.xlsx`);
 
-    return params.templateId;
+    return { blob, templateId: params.templateId };
   }
 
   addKeyMapSheet(params) {
@@ -324,7 +300,7 @@ export class TemplateGenerator {
       "1. This file works OFFLINE. You do not need internet.";
     sheet.getCell("A14").value =
       "2. Do not lose your password. There is no reset.";
-    sheet.getCell("A15").value = `3. Template ID: ${params.templateId}`;
+    // Template ID removed for security/vanilla file
   }
 
   addAlgorithmSheet(params) {
@@ -340,9 +316,9 @@ export class TemplateGenerator {
     });
 
     // Links to Main Sheet
-    sheet.getCell("B2").value = { formula: "='Encrypt & Decrypt'!B7" }; // Encryption Input
-    sheet.getCell("B3").value = { formula: "='Encrypt & Decrypt'!$B$4" }; // Password
-    sheet.getCell("B4").value = { formula: "='Encrypt & Decrypt'!B10" }; // Decryption Input
+    sheet.getCell("B2").value = { formula: "=TRIM(CLEAN('Encrypt & Decrypt'!B7))" }; // Encryption Input (Cleaned)
+    sheet.getCell("B3").value = { formula: "=TRIM(CLEAN('Encrypt & Decrypt'!$B$4))" }; // Password (Cleaned)
+    sheet.getCell("B4").value = { formula: "=TRIM(CLEAN('Encrypt & Decrypt'!B10))" }; // Decryption Input (Cleaned)
 
     // --- ENCRYPTION LOGIC (Rows 10+) ---
     // Strategy: Explode string into rows, process per char, implode with CONCAT
@@ -392,16 +368,19 @@ export class TemplateGenerator {
           const coreLogic = `IF(${isUpper}, ${shiftUpper}, IF(${isLower}, ${shiftLower}, ${prevCellRef}))`;
           formula = `=IF(${prevCellRef}="", "", ${coreLogic})`;
         } else if (op === "xor") {
-          // Case Preserving Vigenere (XOR slot)
-
+          // Simplified Vigenere Mixing (Robust & Compatible)
+          // Key = (Salt + PasswordChar) % 26
+          // Encrypt = (Char + Key) % 26
+          
           const passCharFormula = `CODE(MID(${passwordRef}&"Z",MOD(${indexRef}-1,LEN(${passwordRef}&"Z"))+1,1))`;
           const shift = params.xorSalt;
+          const keyFormula = `MOD(${shift} + ${passCharFormula}, 26)`;
 
           const isUpper = `AND(CODE(${prevCellRef})>=65, CODE(${prevCellRef})<=90)`;
           const isLower = `AND(CODE(${prevCellRef})>=97, CODE(${prevCellRef})<=122)`;
 
-          const shiftUpper = `CHAR(MOD(CODE(${prevCellRef}) - 65 + ${shift} + ${passCharFormula}, 26) + 65)`;
-          const shiftLower = `CHAR(MOD(CODE(${prevCellRef}) - 97 + ${shift} + ${passCharFormula}, 26) + 97)`;
+          const shiftUpper = `CHAR(MOD(CODE(${prevCellRef}) - 65 + ${keyFormula}, 26) + 65)`;
+          const shiftLower = `CHAR(MOD(CODE(${prevCellRef}) - 97 + ${keyFormula}, 26) + 97)`;
 
           const coreLogic = `IF(${isUpper}, ${shiftUpper}, IF(${isLower}, ${shiftLower}, ${prevCellRef}))`;
           formula = `=IF(${prevCellRef}="", "", ${coreLogic})`;
@@ -513,15 +492,17 @@ export class TemplateGenerator {
           const coreLogic = `IF(${isUpper}, ${shiftUpper}, IF(${isLower}, ${shiftLower}, ${prevCellRef}))`;
           formula = `=IF(${prevCellRef}="", "", ${coreLogic})`;
         } else if (op === "xor") {
-          // Inverse
+          // Inverse Simplified Vigenere Mixing
           const passCharFormula = `CODE(MID(${passwordRef}&"Z",MOD(${indexRef}-1,LEN(${passwordRef}&"Z"))+1,1))`;
           const shift = params.xorSalt;
+          const keyFormula = `MOD(${shift} + ${passCharFormula}, 26)`;
 
           const isUpper = `AND(CODE(${prevCellRef})>=65, CODE(${prevCellRef})<=90)`;
           const isLower = `AND(CODE(${prevCellRef})>=97, CODE(${prevCellRef})<=122)`;
 
-          const shiftUpper = `CHAR(MOD(CODE(${prevCellRef}) - 65 - ${shift} - ${passCharFormula}, 26) + 65)`;
-          const shiftLower = `CHAR(MOD(CODE(${prevCellRef}) - 97 - ${shift} - ${passCharFormula}, 26) + 97)`;
+          // Decrypt: Subtract the keyFormula (Key)
+          const shiftUpper = `CHAR(MOD(CODE(${prevCellRef}) - 65 - ${keyFormula}, 26) + 65)`;
+          const shiftLower = `CHAR(MOD(CODE(${prevCellRef}) - 97 - ${keyFormula}, 26) + 97)`;
 
           const coreLogic = `IF(${isUpper}, ${shiftUpper}, IF(${isLower}, ${shiftLower}, ${prevCellRef}))`;
           formula = `=IF(${prevCellRef}="", "", ${coreLogic})`;
@@ -567,9 +548,8 @@ export class TemplateGenerator {
     sheet.getCell("A1").value = "Template Integrity Check";
     sheet.getCell("A1").font = { bold: true, size: 14 };
 
-    sheet.getCell("A3").value = "Template ID:";
-    sheet.getCell("B3").value = params.templateId;
-
+    // Template ID removed
+    
     sheet.getCell("A4").value = "Generated On:";
     sheet.getCell("B4").value = new Date().toISOString().split("T")[0];
 
@@ -598,6 +578,7 @@ export class TemplateGenerator {
       "   - Your original seed phrase will appear in the Decrypted Output box.",
       "",
       "3. SAFETY",
+      "   - Turn off 'Auto-Save' in Excel to prevent saving sensitive data to this file.",
       '   - This file contains the "Lock". Your password is the "Key".',
       "   - You need BOTH to recover your funds.",
       "   - Store this Excel file in a different place from your encrypted code.",
