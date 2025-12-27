@@ -7,7 +7,7 @@ import { randomInt, shuffleArray, generateId, createRNG } from "./crypto";
 export class TemplateGenerator {
   constructor() {
     this.workbook = new ExcelJS.Workbook();
-    this.workbook.creator = "Cypher Template Generator";
+    this.workbook.creator = "Template Generator";
     this.workbook.created = new Date();
   }
 
@@ -169,7 +169,7 @@ export class TemplateGenerator {
     // Title
     sheet.mergeCells("A1:D1");
     const titleCell = sheet.getCell("A1");
-    titleCell.value = "CYPHER SECURE TEMPLATE";
+    titleCell.value = "CIPHER SECURE TEMPLATE";
     titleCell.font = { bold: true, size: 16, color: { argb: "FFFFFFFF" } };
     titleCell.fill = {
       type: "pattern",
