@@ -136,6 +136,21 @@ export class TemplateGenerator {
       },
     };
 
+    const passwordStyle = {
+      numFmt: ";;;**",
+      fill: {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FFFFFBEB" },
+      }, // Light yellow
+      border: {
+        top: { style: "thin" },
+        left: { style: "thin" },
+        bottom: { style: "thin" },
+        right: { style: "thin" },
+      },
+    };
+
     const outputStyle = {
       fill: {
         type: "pattern",
@@ -171,8 +186,7 @@ export class TemplateGenerator {
     sheet.getCell("C3").value = ""; // Placeholder
 
     const passInput = sheet.getCell("B4");
-    passInput.value = ""; // Empty for user
-    passInput.style = inputStyle;
+    passInput.style = passwordStyle;
     // Data validation for password length could go here
 
     // --- ENCRYPTION SECTION ---
@@ -183,7 +197,7 @@ export class TemplateGenerator {
     sheet.getCell("D6").value = "Encrypted Output:";
 
     const seedInput = sheet.getCell("B7");
-    seedInput.style = inputStyle;
+    seedInput.style = passwordStyle;
 
     const encryptOutput = sheet.getCell("D7");
     encryptOutput.style = outputStyle;
@@ -283,8 +297,39 @@ export class TemplateGenerator {
     const decryptInput = sheet.getCell("B10");
     decryptInput.style = inputStyle;
 
+    // Toggle for Decrypted Output
+    const toggleCell = sheet.getCell("$E$10");
+    toggleCell.value = "HIDDEN";
+    toggleCell.dataValidation = {
+      type: "list",
+      allowBlank: false,
+      formulae: ['"HIDDEN,VISIBLE"'],
+    };
+    toggleCell.alignment = { horizontal: "center", vertical: "middle" };
+    toggleCell.font = { bold: true, size: 10 };
+    toggleCell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "thin" },
+      right: { style: "thin" },
+    };
+
     const decryptOutput = sheet.getCell("D10");
     decryptOutput.style = outputStyle;
+    
+    // Conditional Formatting for HIDDEN mode
+    sheet.addConditionalFormatting({
+      ref: "D10",
+      rules: [
+        {
+          type: "expression",
+          formulae: ['$E$10="HIDDEN"'],
+          style: {
+            numFmt: ";;;**",
+          },
+        },
+      ],
+    });
 
     // Link Decryption output to Algorithm sheet decryption flow
     // Decryption is the reverse of Encryption.
@@ -566,8 +611,8 @@ export class TemplateGenerator {
       "1. ENCRYPTION (Protecting your seed)",
       "   - Disconnect your internet (optional but recommended).",
       '   - Go to the "Encrypt & Decrypt" tab.',
-      "   - Enter a strong password in the Password box.",
-      "   - Enter your seed phrase in the Input box.",
+      "   - Enter a strong password in the Password box (masked for privacy).",
+      "   - Enter your seed phrase in the Input box (masked for privacy).",
       '   - The green "Encrypted Output" box will show your secured code.',
       "   - Copy this code and save it safely (email, cloud, print).",
       "",
@@ -575,7 +620,7 @@ export class TemplateGenerator {
       "   - Open this file.",
       "   - Enter your password.",
       '   - Paste your encrypted code into the "Input Encrypted Phrase" box.',
-      "   - Your original seed phrase will appear in the Decrypted Output box.",
+      '   - Select "VISIBLE" next to the Decrypted Output box to view your seed phrase.',
       "",
       "3. SAFETY",
       "   - Turn off 'Auto-Save' in Excel to prevent saving sensitive data to this file.",
