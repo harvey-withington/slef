@@ -320,7 +320,7 @@
               class="flex items-center gap-2 mb-1 font-semibold text-slate-700 dark:text-slate-300"
             >
               <Archive class="w-4 h-4" />
-              Recipe:
+              Zip it up!
             </div>
             Right-click the Excel file → "Compress to ZIP file" → Set a password.
             Now you can access your "Cipher Box" from any device worldwide.

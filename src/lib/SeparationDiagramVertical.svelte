@@ -130,7 +130,7 @@
         y="55"
         text-anchor="middle"
         class="text-xs fill-amber-600 dark:fill-amber-300"
-        >(Your Device Key)</text
+        >(Cipher Box Key)</text
       >
     </g>
 
