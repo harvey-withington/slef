@@ -1,22 +1,33 @@
-# SLEF - Seed Phrase Encryption Tool
+# SLEF - Seed Phrase Encryption Template Generator
 
-SLEF (Self Custody for Humans) is a secure, client-side tool designed to help users generate unique, offline-first encryption templates for crypto self-custody. It provides a simple way to create and restore deterministic paper wallet layouts without exposing sensitive data to the internet.
+SLEF allows crypto HODLers to create unique Cipher Templates that turn your crypto seed phrases into secure encrypted codes using a **Two-Factor Security Model**.
 
-### [🚀 Try SLEF Now](https://harvey-withington.github.io/slef/)
+With SLEF, you can securely store, travel with, and manage your crypto seed phrases without the stress of exposure or loss.
+
+### [🚀 Try SLEF Now](https://slef.app)
+
+## The Self Custody Problem
+
+Self-Custody is **a hard problem**. But it needs to be solved for wider crypto adoption. We humans need a simple method that is **secure, user-friendly, and trustless**.
+
+-   **There are Eyes Everywhere**: No matter how well you hide your seed phrase (metal, paper or other), if it's ever exposed, it's out there in plain text. Cell phones, security cameras, or even nosey neighbours can get a glimpse of your 12 or 24 words.
+-   **Travelling with your Seed Phrase**: Traveling with a physical seed phrase exposes you to risks like airport security scanners and luggage inspections. Metal plates or even paper can be confiscated and/or photographed without your knowledge or consent.
+
+## The SLEF Solution
+
+Split your seed phrase into **three independent elements** and store them in separate locations. *All three elements* are needed to reconstitute your seed phrase:
+
+1.  **Your Password**: A Locked "Cipher Box".
+2.  **The Excel File**: Your "Cipher Box" Key.
+3.  **The Encrypted Code**: The Decoy Treasure.
 
 ## Features
 
-- **Client-Side Only**: All template generation happens locally in your browser. No data is ever sent to a server.
-- **Offline Compatible**: Designed to work without an internet connection for maximum security.
-- **Deterministic**: Regenerate the exact same template using your unique 8-character Template ID.
-- **Modern UI**: Built with Svelte and Tailwind CSS for a clean, responsive user experience.
-- **Dark Mode**: Because dark mode is cool.
-
-## How It Works
-
-1.  **Generate New**: Creates a completely unique encryption template with a random algorithm.
-2.  **Download**: Save your template as an Excel file (.xlsx) which you can print or store offline.
-3.  **Regenerate**: Enter your previous Template ID to regenerate the exact same template if you lose your file.
+-   **Client-Side Only**: All template generation happens locally in your browser. No data is ever sent to a server.
+-   **Offline Compatible**: Designed to work without an internet connection for maximum security.
+-   **Deterministic**: Regenerate the exact same template using your unique 8-character Template ID.
+-   **Modern UI**: Built with Svelte and Tailwind CSS for a clean, responsive user experience.
+-   **Light/Dark Mode**: Because dark mode is cool.
 
 ## Tech Stack
 
@@ -53,39 +64,21 @@ npm run build
 
 The output will be in the `dist` directory.
 
-## Deployment
-
-This project is configured to deploy automatically to GitHub Pages via GitHub Actions.
-
-1.  Push changes to `main`.
-2.  The workflow in `.github/workflows/deploy.yml` will build and deploy to the `gh-pages` branch.
-3.  Ensure GitHub Pages is enabled in repository settings and pointing to the `gh-pages` branch.
-
 ## Cryptography & Security
 
 ### 1. Excel-Side Encryption (Offline Formulas)
 These algorithms are embedded directly into the Excel cells to encrypt and decrypt the input without any external dependencies.
 
-- **Polyalphabetic Substitution (Vigenère Variants)**
-  - **Additive Mixing (Used in "substitute" step):** The character shift is calculated by **adding** the Password character code and the Salt (`Shift = PasswordChar + Salt`).
-  - **Bitwise Mixing (Used in "xor" step):** The character shift is derived by **XORing** the Password character code with the Salt (`Shift = BITXOR(PasswordChar, Salt)`).
-  - **Case Preservation:** For both variants, the final shift is applied modulo 26. This ensures that uppercase letters remain uppercase and lowercase letters remain lowercase, preserving the format of seed phrases.
-- **Transposition Cipher**
-  - **Usage:** Used in the **"reverse"** step.
-  - **Implementation:** Reverses the string order using standard Excel text functions (`MID`, `LEN`, `INDIRECT`) and calculated indices.
-- **Monoalphabetic Substitution**
-  - **Usage:** Used in the **"map"** step (always the final operation).
-  - **Implementation:** Maps every character (A-Z, a-z) to a randomized counterpart using `VLOOKUP` against a generated "KeyMap" sheet.
+- **Bitwise-Mixed Vigenère Ciphers**: The character shift is derived by **XORing** the Password character code with the Salt (`Shift = BITXOR(PasswordChar, Salt)`).
+- **Transposition Cipher**: Reverses the string order using standard Excel text functions (`MID`, `LEN`, `INDIRECT`) and calculated indices.
+- **Shannon Entropy (Monoalphabetic Substitution)**: Maps every character (A-Z, a-z) to a randomized counterpart using `VLOOKUP` against a generated "KeyMap" sheet (a random permutation of 52 characters). Without the file, an attacker faces **52!** (approx. 8 × 10⁶⁷) possible combinations.
 
 ### 2. Generator-Side Logic (Setup & Keys)
 These algorithms run in the browser to deterministically generate the unique structure and keys for each template.
 
-- **Mulberry32 (PRNG)**
-  - **Usage:** A seeded Pseudo-Random Number Generator used to shuffle the alphabet maps, determine the sequence of operations, and generate the fixed salts.
-- **cyrb128 (Hash Function)**
-  - **Usage:** Hashes the alphanumeric **Template ID** into a 128-bit integer seed for the Mulberry32 RNG. This ensures the same Template ID always produces the exact same Excel sheet structure.
-- **Web Crypto API (CSPRNG)**
-  - **Usage:** `window.crypto.getRandomValues` is used to generate the initial secure random Template ID.
+- **Mulberry32 (PRNG)**: A seeded Pseudo-Random Number Generator used to shuffle the alphabet maps and determine the sequence of operations.
+- **cyrb128 (Hash Function)**: Hashes the alphanumeric **Template ID** into a 128-bit integer seed for the Mulberry32 RNG.
+- **Web Crypto API (CSPRNG)**: `window.crypto.getRandomValues` is used to generate the initial secure random Template ID.
 
 ## License
 
