@@ -1,34 +1,62 @@
 <script>
   import { onMount } from "svelte";
   export let currentPage;
-  import { FileSpreadsheet, BookOpen, Shield, Sun, Moon } from "lucide-svelte";
+  import {
+    FileSpreadsheet,
+    BookOpen,
+    Shield,
+    Sun,
+    Moon,
+    Monitor,
+  } from "lucide-svelte";
 
-  let darkMode = false;
+  let theme = "system"; // "light", "dark", or "system"
+  let isSystemDark = false;
   const base = import.meta.env.BASE_URL;
 
   onMount(() => {
-    if (
-      localStorage.theme === "dark" ||
-      (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
-    ) {
-      darkMode = true;
-      document.documentElement.classList.add("dark");
-    } else {
-      darkMode = false;
-      document.documentElement.classList.remove("dark");
-    }
+    // Initialize state from localStorage or default to system
+    theme = localStorage.theme || "system";
+    
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    isSystemDark = mediaQuery.matches;
+    mediaQuery.addEventListener("change", (e) => {
+      isSystemDark = e.matches;
+      if (theme === "system") applyTheme();
+    });
+
+    applyTheme();
   });
 
-  const toggleDarkMode = () => {
-    darkMode = !darkMode;
-    if (darkMode) {
+  const applyTheme = () => {
+    const isDark =
+      theme === "dark" ||
+      (theme === "system" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+    if (isDark) {
       document.documentElement.classList.add("dark");
-      localStorage.theme = "dark";
     } else {
       document.documentElement.classList.remove("dark");
-      localStorage.theme = "light";
     }
+
+    if (theme === "system") {
+      localStorage.removeItem("theme");
+    } else {
+      localStorage.theme = theme;
+    }
+  };
+
+  const toggleTheme = () => {
+    if (theme === "system") {
+      theme = "light";
+    } else if (theme === "light") {
+      theme = "dark";
+    } else {
+      theme = "system";
+    }
+    applyTheme();
   };
 </script>
 
@@ -81,16 +109,26 @@
       </button>
     </div>
 
-    <!-- Dark Mode Toggle -->
+    <!-- Theme Toggle -->
     <button
-      on:click={toggleDarkMode}
-      class="p-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200"
-      aria-label="Toggle Dark Mode"
+      on:click={toggleTheme}
+      class="p-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 relative"
+      aria-label="Toggle Theme"
+      title="Current: {theme.charAt(0).toUpperCase() + theme.slice(1)}"
     >
-      {#if darkMode}
-        <Sun class="w-5 h-5" />
-      {:else}
+      {#if theme === "system"}
+        <Monitor class="w-5 h-5" />
+        <div class="absolute -top-1 -right-1 bg-white dark:bg-slate-800 rounded-full p-0.5 border border-slate-200 dark:border-slate-700 shadow-sm">
+          {#if isSystemDark}
+            <Moon class="w-2.5 h-2.5 text-blue-500" />
+          {:else}
+            <Sun class="w-2.5 h-2.5 text-blue-500" />
+          {/if}
+        </div>
+      {:else if theme === "dark"}
         <Moon class="w-5 h-5" />
+      {:else}
+        <Sun class="w-5 h-5" />
       {/if}
     </button>
   </div>
