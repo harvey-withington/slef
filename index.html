@@ -5,8 +5,20 @@
     <link rel="icon" type="image/svg+xml" href="slef-logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SLEF - Crypto Self-Custody for Humans</title>
-    <script type="module" crossorigin src="./assets/index-DPpmHeck.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CJnxj3NF.css">
+    <script>
+      // Initialize theme before anything else to prevent flicker
+      if (
+        localStorage.theme === "dark" ||
+        (!("theme" in localStorage) &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    </script>
+    <script type="module" crossorigin src="./assets/index-BrzVtc6I.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-gtrp1JEB.css">
   </head>
   <body>
     <div id="app"></div>
