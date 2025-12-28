@@ -1,4 +1,4 @@
-# SLEF - Self Custody Template Generator
+# SLEF - Seed Phrase Encryption Tool
 
 SLEF (Self Custody for Humans) is a secure, client-side tool designed to help users generate unique, offline-first encryption templates for crypto self-custody. It provides a simple way to create and restore deterministic paper wallet layouts without exposing sensitive data to the internet.
 
