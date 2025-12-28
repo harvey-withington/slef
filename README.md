@@ -17,9 +17,9 @@ Self-Custody is **a hard problem**. But it needs to be solved for wider crypto a
 
 Split your seed phrase into **three independent elements** and store them in separate locations. *All three elements* are needed to reconstitute your seed phrase:
 
-1.  **Your Password**: A Locked "Cipher Box".
-2.  **The Excel File**: Your "Cipher Box" Key.
-3.  **The Encrypted Code**: The Decoy Treasure.
+1.  **Excel Template**: A Locked "Cipher Box".
+2.  **Strong Password**: Your "Cipher Box" Key.
+3.  **Encrypted Code**: The Decoy Treasure.
 
 ## Features
 
